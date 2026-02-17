@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contact | James Robinson</title>
+  <title>Contact | Adam Coad</title>
+  <meta name="description" content="Contact Adam Coad." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <nav class="nav">
     <div class="container nav-inner">
-      <div class="brand">Adam Coad <span class="badge">UT Austin</span></div>
+      <div class="brand">
+        Adam Coad <span class="badge">UT Austin</span>
+      </div>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -20,20 +23,32 @@
   </nav>
 
   <main class="container hero">
-    <div class="card">
+    <section class="card">
       <h1>Contact</h1>
       <p>Best ways to reach me:</p>
-      <ul>
-        <li>Email: <a href="mailto:yourname@email.com">yourname@email.com</a> (replace this)</li>
-        <li>GitHub: <a href="https://github.com/">github.com/yourusername</a> (replace this)</li>
-        <li>LinkedIn: <a href="https://www.linkedin.com/">linkedin.com/in/yourprofile</a> (replace this)</li>
+
+      <ul class="list">
+        <li>Email: <a href="mailto:ajc7477@my.utexas.edu">ajc7477@my.utexas.edu</a></li>
+        <li>GitHub: <a href="https://github.com/AdamC06" target="_blank" rel="noopener">github.com/AdamC06</a></li>
+        <li>LinkedIn: <a href="https://www.linkedin.com/in/adam-coad-357b7b2ab" target="_blank" rel="noopener">linkedin.com/in/adam-coad-357b7b2ab</a></li>
       </ul>
-      <p class="muted">Replace the links above with your real info.</p>
-    </div>
+
+      <div class="btn-row">
+        <a class="btn primary" href="mailto:ajc7477@my.utexas.edu">Email Me</a>
+        <a class="btn" href="projects.html">See Projects</a>
+      </div>
+
+      <p class="notice">
+        If you’re reaching out about investing, research, or internships, include a quick note about what you’re working on.
+      </p>
+    </section>
   </main>
 
-  <footer class="footer"><div class="container">© <span id="year"></span> Adam Coad</div></footer>
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Adam Coad</div>
+  </footer>
+
   <script src="script.js"></script>
-  <script>document.getElementById("year").textContent=new Date().getFullYear();</script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
