@@ -4,12 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>About | Adam Coad</title>
+  <meta name="description" content="About Adam Coad — UT Austin student and finance-focused builder." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <nav class="nav">
     <div class="container nav-inner">
-      <div class="brand">Adam Coad <span class="badge">UT Austin</span></div>
+      <div class="brand">
+        Adam Coad <span class="badge">UT Austin</span>
+      </div>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -20,15 +23,48 @@
   </nav>
 
   <main class="container hero">
-    <div class="card">
+    <section class="card">
       <h1>About Me</h1>
-      <p>I’m a UT Austin student focused on business, marketing, and analytics. I like building projects that turn messy data into clear insights.</p>
-      <p class="muted">Update this page with your major, interests, clubs, and goals.</p>
-    </div>
+
+      <p>
+        I’m a student at <strong>The University of Texas at Austin</strong>. I’m currently a
+        <strong>Government</strong> major and I’m working toward transferring into
+        <strong>McCombs School of Business</strong> to study <strong>Finance</strong> or <strong>Accounting</strong>.
+      </p>
+
+      <p>
+        I’m the founder of <strong>Equity Research</strong> within <strong>Marketrics</strong>, a new organization.
+        I’m also involved in <strong>USIT</strong>, <strong>University Finance Association</strong>,
+        <strong>Texas Economics Association</strong>, and the <strong>Texas Golf Club</strong>.
+      </p>
+
+      <h2>Experience</h2>
+      <ul class="list">
+        <li><strong>Memorial Realty Real Estate</strong> — Financial Analysis & Accounting Intern</li>
+        <li><strong>ClearDefense (Austin)</strong> — Data Analysis Intern</li>
+      </ul>
+
+      <h2>Focus Areas</h2>
+      <div>
+        <span class="pill">Equity Research</span>
+        <span class="pill">Financial Modeling</span>
+        <span class="pill">Valuation</span>
+        <span class="pill">Excel Analytics</span>
+        <span class="pill">R / Data</span>
+      </div>
+
+      <div class="btn-row">
+        <a class="btn primary" href="projects.html">See Projects</a>
+        <a class="btn" href="contact.html">Reach Out</a>
+      </div>
+    </section>
   </main>
 
-  <footer class="footer"><div class="container">© <span id="year"></span> Adam Coad</div></footer>
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Adam Coad</div>
+  </footer>
+
   <script src="script.js"></script>
-  <script>document.getElementById("year").textContent=new Date().getFullYear();</script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
