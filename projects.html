@@ -1,98 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Projects | Adam Coad</title>
+  <meta name="description" content="Projects by Adam Coad — stock pitches, dashboards, and analytics work." />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="nav-inner">
-      <a class="brand" href="index.html">
-        Adam Coad <span class="tag">UT Austin</span>
-      </a>
-
-      <nav class="nav-links">
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        Adam Coad <span class="badge">UT Austin</span>
+      </div>
+      <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a class="active" href="projects.html">Projects</a>
+        <a href="projects.html">Projects</a>
         <a href="contact.html">Contact</a>
-      </nav>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- MAIN CONTENT -->
-  <main class="container">
-    <h1>Projects</h1>
-    <p class="muted">A few highlights across investing, analytics, and dashboards.</p>
+  <main class="container hero">
+    <section class="card">
+      <h1>Projects</h1>
+      <p class="muted">A few highlights across investing, analytics, and dashboards.</p>
 
-    <div class="grid">
-
-      <div class="card project">
-        <div class="title">
-          <strong>PayPal Stock Pitch (PYPL)</strong>
-          <a class="link" href="assets/paypal-stock-pitch.pdf" target="_blank" rel="noopener">View</a>
+      <div class="grid">
+        <div class="card project">
+          <div class="title">
+            <strong>PayPal Stock Pitch (PYPL)</strong>
+            <a class="link" href="assets/paypal-stock-pitch.pdf" target="_blank" rel="noopener">View</a>
+          </div>
+          <p>Investment thesis + key drivers, risks, and valuation work presented in a pitch format.</p>
+          <div>
+            <span class="pill">Valuation</span>
+            <span class="pill">Pitch Deck</span>
+            <span class="pill">Equity Research</span>
+          </div>
+          <p class="notice">Upload your PDF to <code>assets/paypal-stock-pitch.pdf</code> to activate this link.</p>
         </div>
-        <p>Investment thesis + key drivers, risks, and valuation work presented in a pitch format.</p>
-        <div>
-          <span class="pill">Valuation</span>
-          <span class="pill">Pitch Deck</span>
-          <span class="pill">Equity Research</span>
+
+        <div class="card project">
+          <div class="title">
+            <strong>EOSE Stock Pitch</strong>
+            <a class="link" href="assets/eose.pdf" target="_blank" rel="noopener">View</a>
+          </div>
+          <p>Research write-up including catalysts, competitive context, and risk assessment.</p>
+          <div>
+            <span class="pill">Industry</span>
+            <span class="pill">Catalysts</span>
+            <span class="pill">Risk</span>
+          </div>
+          <p class="notice">Upload your PDF to <code>assets/eose.pdf</code> to activate this link.</p>
+        </div>
+
+        <div class="card project">
+          <div class="title">
+            <strong>DoorDash Delivery Analysis</strong>
+            <a class="link" href="assets/doordash-analysis.xlsx" target="_blank" rel="noopener">View</a>
+          </div>
+          <p>Excel-based analysis exploring regional patterns, cuisine mix, and actionable insights.</p>
+          <div>
+            <span class="pill">Excel</span>
+            <span class="pill">Pivot Tables</span>
+            <span class="pill">Insights</span>
+          </div>
+          <p class="notice">Upload your file to <code>assets/doordash-analysis.xlsx</code> to activate this link.</p>
+        </div>
+
+        <div class="card project">
+          <div class="title">
+            <strong>Live Stock Portfolio Dashboard</strong>
+            <a class="link" href="assets/portfolio-dashboard.html" target="_blank" rel="noopener">Open</a>
+          </div>
+          <p>An interactive dashboard for tracking a portfolio. Built as a standalone HTML page.</p>
+          <div>
+            <span class="pill">Dashboard</span>
+            <span class="pill">HTML</span>
+            <span class="pill">Data</span>
+          </div>
         </div>
       </div>
 
-      <div class="card project">
-        <div class="title">
-          <strong>EOSE Stock Pitch</strong>
-          <a class="link" href="assets/eose.pdf" target="_blank" rel="noopener">View</a>
-        </div>
-        <p>Research write-up including catalysts, competitive context, and risk assessment.</p>
-        <div>
-          <span class="pill">Industry</span>
-          <span class="pill">Catalysts</span>
-          <span class="pill">Risk</span>
-        </div>
-      </div>
-
-      <div class="card project">
-        <div class="title">
-          <strong>DoorDash Delivery Analysis</strong>
-          <a class="link" href="assets/doordash-analysis.xlsx" target="_blank" rel="noopener">View</a>
-        </div>
-        <p>Excel-based analysis exploring regional patterns, cuisine mix, and actionable insights.</p>
-        <div>
-          <span class="pill">Excel</span>
-          <span class="pill">Pivot Tables</span>
-          <span class="pill">Insights</span>
-        </div>
-      </div>
-
-      <div class="card project">
-        <div class="title">
-          <strong>Live Stock Portfolio Dashboard</strong>
-          <a class="link" href="assets/portfolio-dashboard.html" target="_blank" rel="noopener">Open</a>
-        </div>
-        <p>An interactive dashboard for tracking a portfolio. Built as a standalone HTML page.</p>
-        <div>
-          <span class="pill">Dashboard</span>
-          <span class="pill">HTML</span>
-          <span class="pill">Data</span>
-        </div>
-      </div>
-
-    </div>
+    </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="footer">
-    <p>© 2026 Adam Coad</p>
+    <div class="container">© <span id="year"></span> Adam Coad</div>
   </footer>
 
   <script src="script.js"></script>
-
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
