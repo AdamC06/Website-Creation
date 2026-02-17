@@ -1,9 +1,8 @@
-// highlight current page in navbar
+// Highlight active nav link based on current page
 (() => {
-  const current = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const path = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
   document.querySelectorAll(".nav-links a").forEach(a => {
-    if ((a.getAttribute("href") || "").toLowerCase() === current) {
-      a.style.background = "rgba(255,255,255,.08)";
-    }
+    const href = (a.getAttribute("href") || "").toLowerCase();
+    if (href === path) a.classList.add("active");
   });
 })();
