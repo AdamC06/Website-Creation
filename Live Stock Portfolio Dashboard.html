@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live Stock & Account Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--accent:#00ff91;--muted:#aaa}
+html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Segoe UI,system-ui,Arial}
+.container{max-width:1200px;margin:18px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:1.4rem}
+#controls{display:flex;gap:8px;align-items:center;margin-top:6px; flex-wrap:wrap;}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;margin-top:18px}
+.stock-card{background:var(--card);padding:12px;border-radius:10px;text-align:center;cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative}
+.stock-card:hover{transform:translateY(-4px);box-shadow:0 6px 18px rgba(0,0,0,.6)}
+.tag{font-weight:700;margin-bottom:6px}
+.price{font-size:1.25rem;margin:6px 0}
+.previous{color:var(--muted);font-size:.95rem}
+.analysis{margin-top:8px;font-weight:700}
+#timestamp{color:var(--muted);text-align:center;margin-top:8px}
+#chartView{display:none;padding-top:18px}
+#backButton{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+#chartBox{background:var(--card);padding:14px;border-radius:10px}
+canvas{width:100%!important;height:420px!important}
+.small{font-size:.85rem;color:var(--muted)}
+.live-badge{margin-left:10px;padding:6px 8px;border-radius:6px;border:1px solid #0b6623;background:#073b19;color:#7ef3a3}
+input.shares-input{width:70px;padding:4px 6px;border-radius:6px;border:1px solid #555;background:#222;color:#fff;text-align:right}
+#portfolioValue{margin-top:6px;font-weight:700;color:#00ff91}
+
+/* Sector buttons styling */
+.sector-btn {
+  background: var(--card);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.sector-btn:hover, .sector-btn.active {
+  background: var(--accent);
+  color: #000;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div>
+    <h1>Live Stock & Account Dashboard</h1>
+    <div class="small">Top 10 stocks per sector + Portfolio Value</div>
+  </div>
+  <div id="controls">
+    <label class="small" style="margin-right:6px">Sector:</label>
+    <div id="sectorButtons"></div>
+    <button id="refreshBtn" title="Refresh">⟳</button>
+    <div class="small live-badge">Live</div>
+  </div>
+  <div id="portfolioPanel" style="text-align:right">
+    <div id="portfolioValue">Portfolio: $0.00</div>
+  </div>
+</header>
+
+<div id="timestamp">Loading…</div>
+<div id="grid" role="list"></div>
+
+<div id="chartView">
+  <button id="backButton">← Back</button>
+  <div id="chartBox"><canvas id="chartCanvas"></canvas></div>
+</div>
+</div>
+
+<script>
+const FINNHUB_API_KEY = 'd3pta61r01qgab527f00d3pta61r01qgab527f0g';
+
+const SECTORS = {
+  Technology: ['AAPL','MSFT','NVDA','GOOGL','META','AMD','INTC','ORCL','CRM','ADBE'],
+  Energy: ['XOM','CVX','COP','SLB','HAL','BP','TOT','OXY','EOG','ENB'],
+  Finance: ['JPM','BAC','C','WFC','GS','MS','AXP','V','MA','BLK'],
+  Healthcare: ['JNJ','PFE','MRK','UNH','ABT','LLY','AMGN','BMY','GILD','MDT'],
+  Consumer: ['AMZN','TSLA','HD','MCD','SBUX','NKE','LOW','TGT','BKNG','LULU']
+};
+
+const MOCK_BASE = {
+  AAPL:175,MSFT:400,NVDA:600,GOOGL:145,META:350,AMD:110,INTC:35,ORCL:110,CRM:220,ADBE:550,
+  XOM:110,CVX:160,COP:95,SLB:45,HAL:28,BP:35,TOT:50,OXY:70,EOG:100,ENB:40,
+  JPM:135,BAC:30,C:50,WFC:45,GS:380,MS:95,AXP:185,V:220,MA:360,BLK:800,
+  JNJ:170,PFE:38,MRK:115,UNH:510,ABT:125,LLY:320,AMGN:280,BMY:65,GILD:75,MDT:120,
+  AMZN:145,TSLA:240,HD:320,MCD:290,SBUX:105,NKE:95,LOW:240,TGT:180,BKNG:210,LULU:380
+};
+
+let currentSector = Object.keys(SECTORS)[0];
+let currentChart = null;
+let sharesMap = {};
+let priceMap = {}; // <-- store current prices
+
+const grid = document.getElementById('grid');
+const timestamp = document.getElementById('timestamp');
+const chartView = document.getElementById('chartView');
+const chartCanvas = document.getElementById('chartCanvas');
+const backButton = document.getElementById('backButton');
+const refreshBtn = document.getElementById('refreshBtn');
+const portfolioValueDiv = document.getElementById('portfolioValue');
+const sectorButtonsDiv = document.getElementById('sectorButtons');
+
+function populateSectorButtons() {
+  sectorButtonsDiv.innerHTML = '';
+  Object.keys(SECTORS).forEach(sec => {
+    const btn = document.createElement('button');
+    btn.className = 'sector-btn';
+    if(sec === currentSector) btn.classList.add('active');
+    btn.textContent = sec;
+    btn.onclick = () => {
+      currentSector = sec;
+      document.querySelectorAll('.sector-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      loadStocks();
+    };
+    sectorButtonsDiv.appendChild(btn);
+  });
+}
+
+function fmt(n){ return typeof n==='number'?n.toFixed(2):'N/A'; }
+
+async function fetchQuote(sym){
+  try{
+    const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${FINNHUB_API_KEY}`);
+    return await res.json();
+  }catch{return null;}
+}
+
+const randCache = {};
+function seededRandom(sym, i){
+  if(!randCache[sym]) randCache[sym] = sym.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const seed = randCache[sym] + i*37;
+  return Math.abs(Math.sin(seed)*10000)%1;
+}
+
+function mockCandles(sym){
+  const points = 120;
+  const base = MOCK_BASE[sym] || 100;
+  const arr = [];
+  let price = base;
+  for(let i=0;i<points;i++){
+    const r = seededRandom(sym,i)-0.5;
+    price = +(price*(1+r*0.01)).toFixed(2);
+    arr.push(price);
+  }
+  const now = Date.now();
+  const times = Array.from({length:points},(_,i)=>Math.floor((now-(points-i)*60*60*1000)/1000));
+  return {c:arr,t:times};
+}
+
+async function fetchCandles(sym){
+  try{
+    const now = Math.floor(Date.now()/1000);
+    const from = now - 60*60*24*5;
+    const res = await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=${sym}&resolution=60&from=${from}&to=${now}&token=${FINNHUB_API_KEY}`);
+    const data = await res.json();
+    if(data.s==='no_data'||!data.c||data.c.length===0) throw new Error();
+    return data;
+  }catch{return mockCandles(sym);}
+}
+
+function mockQuote(sym){
+  const base = MOCK_BASE[sym] || 100;
+  return { c: base*(1+0.01*(seededRandom(sym,1)-0.5)), pc: base };
+}
+
+function updatePortfolio(){
+  let total = 0;
+  for(const sym in sharesMap){
+    const shares = parseFloat(sharesMap[sym]) || 0;
+    const price = priceMap[sym] || MOCK_BASE[sym] || 100;
+    total += shares * price;
+  }
+  portfolioValueDiv.textContent = `Portfolio: $${total.toFixed(2)}`;
+}
+
+async function loadStocks(){
+  grid.innerHTML = '';
+  timestamp.textContent = 'Updating...';
+  const syms = SECTORS[currentSector];
+  const promises = syms.map(async sym=>{
+    const q = await fetchQuote(sym) || mockQuote(sym);
+    const candles = await fetchCandles(sym);
+    const lastN = candles.c.slice(-10);
+    const avgSlope = lastN.reduce((a,c,i,arr)=>i>0?a+(c-arr[i-1]):a,0)/(lastN.length-1);
+    let advice;
+    if(avgSlope>0) advice='BUY';
+    else if(avgSlope<0) advice='SELL';
+    else advice='HOLD';
+    return {sym,quote:q,advice,candles};
+  });
+  const results = await Promise.all(promises);
+
+  results.forEach(r=>{
+    const card=document.createElement('div');
+    card.className='stock-card';
+    const cur=r.quote.c, prev=r.quote.pc;
+    const delta=cur-prev, pct=prev?((delta/prev)*100):0;
+    const sign=delta>0?'+':'';
+    const color=delta>0?'#00ff91':(delta<0?'#ff6b6b':'#aaa');
+
+    sharesMap[r.sym] = sharesMap[r.sym] || 0; // ensure shares exist
+    priceMap[r.sym] = cur; // store current price
+
+    card.innerHTML=`
+      <div class="tag">${r.sym}</div>
+      <div class="price">$${fmt(cur)}</div>
+      <div class="previous">Prev: $${fmt(prev)}</div>
+      <div class="small" style="color:${color}">${sign}$${Math.abs(delta).toFixed(2)} (${sign}${Math.abs(pct).toFixed(2)}%)</div>
+      <div class="analysis">${r.advice}</div>
+      <div class="small">Shares:
+        <input type="number" min="0" value="${sharesMap[r.sym]}" id="shares-${r.sym}" class="shares-input" data-price="${cur}">
+      </div>`;
+
+    const input = card.querySelector(`#shares-${r.sym}`);
+    input.addEventListener('click', e => e.stopPropagation());
+    input.addEventListener('input', e=>{
+      sharesMap[r.sym] = parseFloat(e.target.value)||0;
+      updatePortfolio();
+    });
+
+    card.addEventListener('click',()=>openChart(r.sym,r.candles));
+    grid.appendChild(card);
+  });
+
+  updatePortfolio();
+  timestamp.textContent=`Last update: ${new Date().toLocaleTimeString()} — ${currentSector}`;
+}
+
+async function openChart(sym,data){
+  grid.style.display='none';
+  chartView.style.display='block';
+  const labels = data.t.map(ts=>new Date(ts*1000).toLocaleString());
+  const prices = data.c;
+  const lastN = prices.slice(-10);
+  const avgSlope = lastN.reduce((a,c,i,arr)=>i>0?a+(c-arr[i-1]):a,0)/(lastN.length-1);
+  const lastPrice = lastN[lastN.length-1];
+  const preds = [];
+  for(let i=1;i<=12;i++) preds.push(+(lastPrice + avgSlope*i).toFixed(2));
+  const predLabels = preds.map((_,i)=>`Predicted Hour ${i+1}`);
+  const allLabels = labels.concat(predLabels);
+  const baseSeries = prices.concat(new Array(preds.length).fill(null));
+  const predSeries = new Array(prices.length).fill(null).concat(preds);
+
+  if(currentChart) currentChart.destroy();
+  const ctx = chartCanvas.getContext('2d');
+  currentChart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels: allLabels,
+      datasets:[
+        { label:'Price', data:baseSeries, borderWidth:2, pointRadius:0, segment:{borderColor:c=>c.p1.parsed.y<c.p0.parsed.y?'#ff6b6b':'#00ff91'}, tension:0.25 },
+        { label:'Prediction', data:predSeries, borderColor:'#4ea8ff', borderDash:[6,4], borderWidth:2, pointRadius:0, tension:0.25 }
+      ]
+    },
+    options:{
+      plugins:{ legend:{labels:{color:'#fff'}}, title:{display:true,text:`${sym} — Hourly Data & Prediction`,color:'#fff'} },
+      scales:{ x:{ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}} }
+    }
+  });
+}
+
+backButton.onclick = ()=>{ chartView.style.display='none'; grid.style.display='grid'; if(currentChart){ currentChart.destroy(); currentChart=null; }};
+refreshBtn.onclick = ()=>{ loadStocks(); };
+
+populateSectorButtons();
+loadStocks();
+setInterval(()=>{ loadStocks(); },60000);
+</script>
+</body>
+</html>
