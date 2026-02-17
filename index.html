@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adam Coad | Website</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">Adam Coad <span class="badge">UT Austin</span></div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container hero">
+    <div class="card">
+      <h1>Hi, I’m Adam.</h1>
+      <p class="muted">This is my personal website built with AI-assisted coding tools.</p>
+      <p>I’m a UT Austin student interested in business, marketing, and analytics. This site highlights what I’m working on and how to reach me.</p>
+
+      <div class="btn-row">
+        <a class="btn primary" href="projects.html">See Projects</a>
+        <a class="btn" href="contact.html">Contact</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Adam Coad</div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
